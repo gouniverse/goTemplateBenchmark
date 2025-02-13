@@ -1,5 +1,0 @@
-goos: linux
-goarch: amd64
-pkg: github.com/SlinSo/goTemplateBenchmark
-cpu: AMD EPYC 7B13
-BenchmarkComplexGolang-16        	

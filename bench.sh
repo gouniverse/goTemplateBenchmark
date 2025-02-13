@@ -119,7 +119,7 @@ _updateDeps() {
     go install -v github.com/tkrajina/ftmpl@master
     ftmpl ftmpl/
 
-    go install -v github.com/sipin/gorazor@master
+    go install -v github.com/sipin/gorazor@main
     gorazor -prefix github.com/SlinSo/goTemplateBenchmark gorazor gorazor
 
     go install -v github.com/valyala/quicktemplate/qtc@master
@@ -137,25 +137,28 @@ _updateDeps() {
     jade -d jade/ jade/simple.jade
     jade -d jade/ jade/index.jade
 
+    go install github.com/OblivionOcean/Goh@main
+
     go mod tidy
+    go test .
 }
 [[ "${arg_u:?}" == "1" ]] && _updateDeps
 
 # run old benchmarks
 _run_old_benchmarks() {
     ${arg_c} test -bench "k(Ace|Amber|Golang|GolangText|Handlebars|Mustache|Pongo2|Soy|JetHTML)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-1.old
-    ${arg_c} test -bench "k(Ego|Quicktemplate|Ftmpl|Gorazor|Hero|Jade|HB|Gomponents|Templ)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-2.old
+    ${arg_c} test -bench "k(Ego|Quicktemplate|Ftmpl|Goh|Gorazor|Hero|Jade|HB|Gomponents|Templ)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-2.old
     ${arg_c} test -bench "Complex(Ace|Amber|Golang|GolangText|Handlebars|Mustache|Pongo2|Soy|JetHTML)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-3.old
-    ${arg_c} test -bench "Complex(Ego|Quicktemplate|Ftmpl|Gorazor|Hero|Jade|Templ|GoDirectBuffer)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-4.old
+    ${arg_c} test -bench "Complex(Ego|Quicktemplate|Ftmpl|Goh|Gorazor|Hero|Jade|Templ|GoDirectBuffer)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-4.old
 }
-[[ "${__no_benchmarks}" == "true" ]] || _run_old_benchmarks
+# [[ "${__no_benchmarks}" == "true" ]] || _run_old_benchmarks
 
 # run benchmarks
 _run_benchmarks() {
     ${arg_g} test -bench "k(Ace|Amber|Golang|GolangText|Handlebars|Mustache|Pongo2|Soy|JetHTML)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-1.new
-    ${arg_g} test -bench "k(Ego|Quicktemplate|Ftmpl|Gorazor|Hero|Jade|HB|Gomponents|Templ)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-2.new
+    ${arg_g} test -bench "k(Ego|Quicktemplate|Ftmpl|Goh|Gorazor|Hero|Jade|HB|Gomponents|Templ)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-2.new
     ${arg_g} test -bench "Complex(Ace|Amber|Golang|GolangText|Handlebars|Mustache|Pongo2|Soy|JetHTML)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-3.new
-    ${arg_g} test -bench "Complex(Ego|Quicktemplate|Ftmpl|Gorazor|Hero|Jade|Templ|GoDirectBuffer)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-4.new
+    ${arg_g} test -bench "Complex(Ego|Quicktemplate|Ftmpl|Goh|Gorazor|Hero|Jade|Templ|GoDirectBuffer)$" -benchmem -benchtime="${arg_t}" -count="${arg_n}" | tee ./files/results-4.new
 }
 [[ "${__no_benchmarks}" == "true" ]] || _run_benchmarks
 
@@ -165,10 +168,10 @@ __format_single_benchmark() {
     local i=${1}
     pb <./files/results-"${i}".new | grep \| | sed '/Name/a \| --- \| --- \| --- \| --- \| --- \|'
     echo ""
-    echo "\`\`\`"
-    echo "comparing: ${arg_c} to ${arg_g}"
-    benchstat -delta-test none files/results-"${i}".old files/results-"${i}".new | tee files/results-"${i}"-benchstat.txt
-    echo "\`\`\`"
+    # echo "\`\`\`"
+    # echo "comparing: ${arg_c} to ${arg_g}"
+    # benchstat files/results-"${i}".old files/results-"${i}".new | tee files/results-"${i}"-benchstat.txt
+    # echo "\`\`\`"
 }
 
 # pretty print for readme.md
